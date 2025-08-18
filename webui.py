@@ -1,3 +1,11 @@
+import sys
+import os
+
+# 添加browser-use项目路径到Python路径
+browser_use_path = os.path.join(os.path.dirname(__file__), '..', 'browser-use')
+if browser_use_path not in sys.path:
+    sys.path.insert(0, browser_use_path)
+
 from dotenv import load_dotenv
 load_dotenv()
 import argparse

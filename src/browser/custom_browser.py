@@ -63,8 +63,12 @@ class CustomBrowser(Browser):
             screen_size = get_screen_resolution()
             offset_x, offset_y = get_window_adjustments()
 
-        chrome_args = {
-            f'--remote-debugging-port={self.config.chrome_remote_debugging_port}',
+        # Get the default debug port or use a random one
+        from browser_use.browser.profile import CHROME_DEBUG_PORT
+        debug_port = getattr(self.config, 'chrome_remote_debugging_port', CHROME_DEBUG_PORT)
+
+        chrome_args = [
+            f'--remote-debugging-port={debug_port}',
             *CHROME_ARGS,
             *(CHROME_DOCKER_ARGS if IN_DOCKER else []),
             *(CHROME_HEADLESS_ARGS if self.config.headless else []),
@@ -73,28 +77,38 @@ class CustomBrowser(Browser):
             f'--window-position={offset_x},{offset_y}',
             f'--window-size={screen_size["width"]},{screen_size["height"]}',
             *self.config.extra_browser_args,
-        }
+        ]
 
         # check if chrome remote debugging port is already taken,
-        # if so remove the remote-debugging-port arg to prevent conflicts
+        # if so use a different port to prevent conflicts
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            if s.connect_ex(('localhost', self.config.chrome_remote_debugging_port)) == 0:
-                chrome_args.remove(f'--remote-debugging-port={self.config.chrome_remote_debugging_port}')
+            if s.connect_ex(('localhost', debug_port)) == 0:
+                # Find an available port
+                import random
+                new_port = random.randint(9223, 9299)
+                while True:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as test_socket:
+                        if test_socket.connect_ex(('localhost', new_port)) != 0:
+                            break
+                        new_port = random.randint(9223, 9299)
+                
+                # Replace the port in chrome_args
+                chrome_args = [arg.replace(f'--remote-debugging-port={debug_port}', 
+                                         f'--remote-debugging-port={new_port}') 
+                              if arg.startswith('--remote-debugging-port=') else arg 
+                              for arg in chrome_args]
+                logger.info(f"Port {debug_port} is in use, using port {new_port} instead")
 
         browser_class = getattr(playwright, self.config.browser_class)
         args = {
-            'chromium': list(chrome_args),
+            'chromium': chrome_args,
             'firefox': [
-                *{
-                    '-no-remote',
-                    *self.config.extra_browser_args,
-                }
+                '-no-remote',
+                *self.config.extra_browser_args,
             ],
             'webkit': [
-                *{
-                    '--no-startup-window',
-                    *self.config.extra_browser_args,
-                }
+                '--no-startup-window',
+                *self.config.extra_browser_args,
             ],
         }
 

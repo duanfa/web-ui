@@ -1,0 +1,12 @@
+export OPENAI_API_BASE="https://api.chatanywhere.tech/v1/"
+export OPENAI_API_KEY="sk-BQwHKSRjV8t2vJNM1cf1SpgBcDOnB3ASvMzZdDXDT52yVFHJ"
+export MODEL="gpt-4o-mini"
+
+# export OPENAI_API_BASE="http://mr-pc:11434/v1/"
+# export OPENAI_API_KEY="jisuanjixi"
+# export MODEL="gpt-oss:120b"
+
+
+# export OPENAI_API_BASE="https://dashscope.aliyuncs.com/compatible-mode/v1/"
+# export OPENAI_API_KEY="sk-b2c5f64593b245cbb5da8860faba06e3"
+# export MODEL="deepseek-v3"

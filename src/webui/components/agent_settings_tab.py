@@ -64,7 +64,7 @@ def create_agent_settings_tab(webui_manager: WebuiManager):
             llm_provider = gr.Dropdown(
                 choices=[provider for provider, model in config.model_names.items()],
                 label="LLM Provider",
-                value=os.getenv("DEFAULT_LLM", "openai"),
+                value=os.getenv("DEFAULT_LLM", "alibaba"),
                 info="Select LLM provider for LLM",
                 interactive=True
             )
@@ -124,13 +124,13 @@ def create_agent_settings_tab(webui_manager: WebuiManager):
                 choices=[provider for provider, model in config.model_names.items()],
                 label="Planner LLM Provider",
                 info="Select LLM provider for LLM",
-                value=None,
+                value=os.getenv("DEFAULT_LLM", "alibaba"),
                 interactive=True
             )
             planner_llm_model_name = gr.Dropdown(
                 label="Planner LLM Model Name",
                 interactive=True,
-                allow_custom_value=True,
+                allow_custom_value=True,        
                 info="Select a model in the dropdown options or directly type a custom model name"
             )
         with gr.Row():

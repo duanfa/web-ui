@@ -52,7 +52,7 @@ def create_browser_settings_tab(webui_manager: WebuiManager):
         with gr.Row():
             use_own_browser = gr.Checkbox(
                 label="Use Own Browser",
-                value=bool(strtobool(os.getenv("USE_OWN_BROWSER", "false"))),
+                value=bool(strtobool(os.getenv("USE_OWN_BROWSER", "true"))),
                 info="Use your existing browser instance",
                 interactive=True
             )
