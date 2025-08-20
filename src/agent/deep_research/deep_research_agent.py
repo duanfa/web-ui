@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import threading
 import uuid
 from pathlib import Path
@@ -526,6 +527,17 @@ Ensure the output is a valid JSON array.
 
     try:
         response = await llm.ainvoke(messages)
+
+        messages_str = f'{messages}'
+            # 替换长base64图片数据为简化的占位符
+        messages_str = re.sub(	
+            r"'image_url': \{'url': 'data:image/png;base64,[^']*'",
+            "'image_url': {'url': 'data:image/png;base64,a.png'",
+            messages_str
+        )
+        logger.info(f'############################### deep_research_agent.py 1 llm.ainvoke messages_str:{messages_str}\n response: {response}')
+		
+
         raw_content = response.content
         # The LLM might wrap the JSON in backticks
         if raw_content.strip().startswith("```json"):
@@ -911,6 +923,20 @@ async def synthesis_node(state: DeepResearchState) -> Dict[str, Any]:
             ).to_messages()
         )
         final_report_md = response.content
+
+        messages_str = synthesis_prompt.format_prompt(
+                topic=topic,
+                plan_summary=plan_summary,
+                formatted_results=formatted_results,
+            ).to_messages()
+            # 替换长base64图片数据为简化的占位符
+        messages_str = re.sub(	
+            r"'image_url': \{'url': 'data:image/png;base64,[^']*'",
+            "'image_url': {'url': 'data:image/png;base64,a.png'",
+            messages_str
+        )
+        logger.info(f'############################### deep_research_agent.py 2 llm.ainvoke messages_str:{messages_str}\n response: {response}')
+		
 
         # Append the reference list automatically to the end of the generated markdown
         if references:
