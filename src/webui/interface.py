@@ -62,8 +62,7 @@ def create_ui(theme_name="Ocean"):
         with gr.Row():
             gr.Markdown(
                 """
-                # 🌐 Browser Use WebUI
-                ### Control your browser with AI assistance
+                # UniAction Agent
                 """,
                 elem_classes=["header-text"],
             )
