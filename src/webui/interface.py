@@ -57,7 +57,7 @@ def create_ui(theme_name="Ocean"):
     ui_manager = WebuiManager()
 
     with gr.Blocks(
-            title="Browser Use WebUI", theme=theme_map[theme_name], css=css, js=js_func,
+            title="UniAction Agent", theme=theme_map[theme_name], css=css, js=js_func,
     ) as demo:
         with gr.Row():
             gr.Markdown(
