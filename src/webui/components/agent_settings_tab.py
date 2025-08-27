@@ -53,7 +53,12 @@ def create_agent_settings_tab(webui_manager: WebuiManager):
     with gr.Group():
         with gr.Column():
             override_system_prompt = gr.Textbox(label="Override system prompt", lines=4, interactive=True)
-            extend_system_prompt = gr.Textbox(label="Extend system prompt", lines=4, interactive=True)
+            extend_system_prompt = gr.Textbox(
+                label="Extend system prompt", 
+                lines=4, 
+                interactive=True,
+                value=os.getenv("extend_system_prompt", "")
+            )
 
     with gr.Group():
         mcp_json_file = gr.File(label="MCP server json", interactive=True, file_types=[".json"])
