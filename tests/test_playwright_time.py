@@ -149,7 +149,7 @@ async def input_time(params: InputTimeAction, page):
 		pages = page.context.pages
 		if len(pages) > 1:
 			page = pages[-1]
-			logger.info("已切换到新打开的页面")
+			logger.info("已切换到新打开的页面 url："+page.url)
 		else:
 			logger.info("未检测到新页面，继续使用当前页面")
 			
@@ -157,17 +157,17 @@ async def input_time(params: InputTimeAction, page):
 		# 等待页面响应
 		
 		# 尝试查找时间输入框   main hasIframe
-		# try:
-		#	 iframe = await page.query_selector("//div[@id='main']/iframe", timeout=500);
-		#	 page = await iframe.content_frame()
-		# except Exception as e:
-		#	 logger.debug(f"无法获取iframe内容: {str(e)}")
-		#	 page = page
-		#	 if not page:
-		#		 raise Exception("无法获取iframe内容")
+		try:
+			iframe = await page.query_selector("//div[@id='main']/iframe");
+			page = await iframe.content_frame()
+			logger.info("成功获取iframe内容")
+		except Exception as e:
+			logger.debug(f"无法获取iframe内容: {str(e)}")
+			page = page
+			if not page:
+				raise Exception("无法获取iframe内容")
 		
-		# logger.info("成功获取iframe内容")
-		logger.info("查找时间输入框...")
+		# logger.info("查找时间输入框...")
 		# time_input = await page.wait_for_selector('//input[@id="meetingTime"]', timeout=500)
 		time_input = await page.wait_for_selector('//div[contains(@class, "CtpUiDateRange")]', timeout=500)
 		await time_input.click()
